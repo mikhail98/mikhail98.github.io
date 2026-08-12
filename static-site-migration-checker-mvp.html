@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Static Site Migration Checker — MVP</title>
+<style>
+:root{--bg:#090b0e;--card:#12161b;--card2:#0e1217;--line:#28313b;--text:#eef2f5;--muted:#8e99a5;--good:#66d39a;--warn:#efc269;--bad:#ff7b7b;--blue:#86b4ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0,#142037 0,transparent 30%),var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 60px}header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}
+h1{font-size:26px;line-height:1.15;margin:0 0 7px}.sub{color:var(--muted);max-width:800px}.badge{border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:var(--muted);white-space:nowrap}
+.layout{display:grid;grid-template-columns:390px 1fr;gap:16px}.card{border:1px solid var(--line);border-radius:15px;background:rgba(18,22,27,.95);box-shadow:0 18px 50px rgba(0,0,0,.25)}.pad{padding:17px}
+h2{font-size:15px;margin:0 0 12px}label{display:block;color:var(--muted);font-size:12px;margin:12px 0 6px}
+input,textarea{width:100%;border:1px solid #303a45;background:#0a0e12;color:var(--text);border-radius:10px;padding:11px;outline:none}input:focus,textarea:focus{border-color:#527fb5}textarea{min-height:150px;resize:vertical;font:11px/1.4 ui-monospace,Menlo,Consolas,monospace}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}button,.filebtn{border:0;border-radius:10px;padding:10px 12px;background:#edf2f8;color:#11161c;font-weight:750;cursor:pointer}button.secondary,.filebtn{background:#1b2430;color:var(--text);border:1px solid #344251;font-weight:650}button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}button:disabled{opacity:.42;cursor:not-allowed}input[type=file]{display:none}
+.note{margin-top:11px;border:1px solid #283541;background:#0d1319;border-radius:10px;padding:10px 11px;color:var(--muted);font-size:11px}.note.ok{color:#b5edce;border-color:#315642;background:#0d1712}.note.err{color:#ffc0c0;border-color:#603737;background:#1b1011}
+.empty{min-height:535px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:28px}.report{display:none}.summary{display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:center;padding:18px}
+.ring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--good) 0%,#252d35 0)}.ring:after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--card)}.score{position:relative;z-index:1;text-align:center}.score strong{display:block;font-size:31px}.score span{font-size:10px;color:var(--muted)}
+.verdict{font-size:22px;font-weight:850}.meta{color:var(--muted);font-size:11px;margin-top:5px}.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.pill{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;color:#bac4ce}.pill.good{color:var(--good);border-color:#315344}.pill.warn{color:var(--warn);border-color:#58472a}.pill.bad{color:var(--bad);border-color:#5c3030}
+.sections{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 18px 16px}.sec{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:13px}.sec.full{grid-column:1/-1}.sec h3{font-size:12px;margin:0 0 9px}.item{display:flex;gap:9px;padding:7px 0;border-top:1px solid #202832}.item:first-of-type{border-top:0}.dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:0 0 auto}.dot.good{background:var(--good)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}.item b{font-size:11px}.item small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid #202832}.kv:first-of-type{border-top:0}.kv span{color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 18px}.actions button.primary{background:#8ebaff}
+.progress{display:none;padding:0 18px 18px;color:var(--muted);font-size:11px}.bar{height:6px;background:#242c34;border-radius:99px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:#8ebaff;transition:.2s}
+footer{color:#68727c;font-size:10px;margin-top:14px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sections{grid-template-columns:1fr}.sec.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Static Site Migration Checker</h1><div class="sub">URL → compatibility report → <b>Copy simplified</b>. Production target: только статический HTML/CSS/JS. WordPress допустим только как источник snapshot.</div></div>
+ <div class="badge">single HTML · MVP</div>
+</header>
+
+<div class="layout">
+<section class="card pad">
+ <h2>1. Введите сайт</h2>
+ <label>URL</label>
+ <input id="url" placeholder="https://gaccountancy.pl">
+ <div class="row"><button id="analyzeUrl">Analyze URL</button><button id="reset" class="ghost">Reset</button></div>
+ <div id="status" class="note">Сначала используется прямой fetch. Если сайт запрещает CORS — fallback через AllOrigins. Для production нужен свой proxy/crawler.</div>
+
+ <label>Fallback: HTML вручную</label>
+ <textarea id="source" placeholder="Вставьте source HTML, если URL недоступен…"></textarea>
+ <div class="row"><button id="analyzeHtml" class="secondary">Analyze pasted HTML</button><label class="filebtn" for="file">Load .html</label><input id="file" type="file" accept=".html,.htm,text/html"></div>
+</section>
+
+<section class="card">
+ <div id="empty" class="empty"><div><div style="font-size:42px">◫</div><b>Compatibility report</b><div style="margin-top:5px">Покажет PRESERVE / AUTO-CONVERT / BLOCKER и активирует Copy simplified.</div></div></div>
+ <div id="report" class="report">
+  <div class="summary">
+   <div class="ring" id="ring"><div class="score"><strong id="score">0</strong><span>/ 100</span></div></div>
+   <div><div class="verdict" id="verdict"></div><div class="meta" id="meta"></div><div class="pills" id="pills"></div></div>
+  </div>
+  <div class="sections">
+   <div class="sec"><h3>❌ BLOCKER</h3><div id="blockers"></div></div>
+   <div class="sec"><h3>⚙️ AUTO-CONVERT</h3><div id="convert"></div></div>
+   <div class="sec"><h3>✅ PRESERVE</h3><div id="preserve"></div></div>
+   <div class="sec"><h3>Page metrics</h3><div id="metrics"></div></div>
+   <div class="sec full"><h3>Migration plan</h3><div id="plan"></div></div>
+  </div>
+  <div class="progress" id="progress">Building simplified standalone page… <span id="progText"></span><div class="bar"><i id="prog"></i></div></div>
+  <div class="actions">
+   <button id="copySimplified" class="primary">Copy simplified</button>
+   <button id="downloadSimplified" class="secondary">Download simplified.html</button>
+   <button id="json" class="secondary">Download report.json</button>
+  </div>
+ </div>
+</section>
+</div>
+<footer>Copy simplified создаёт single-page static snapshot: удаляет CMS/runtime JS, обезвреживает backend forms, делает URL абсолютными и пытается inline CSS/images/fonts. Полный multi-page production migration требует crawler.</footer>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let last={report:null,html:'',url:'',simplified:null};
+
+function safeUrl(v){try{let s=v.trim();if(!/^https?:\/\//i.test(s))s='https://'+s;return new URL(s).href}catch{return null}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function host(url){try{return new URL(url).hostname.replace(/^www\./,'')}catch{return''}}
+function sameHost(u,b){try{return host(new URL(u,b).href)===host(b)}catch{return null}}
+function abs(u,b){try{return new URL(u,b).href}catch{return u}}
+function finding(level,title,detail){return{level,title,detail}}
+
+async function fetchText(url){
+  const attempts=[
+    async()=>{const r=await fetch(url,{redirect:'follow'});if(!r.ok)throw Error('direct HTTP '+r.status);return await r.text()},
+    async()=>{const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url));if(!r.ok)throw Error('proxy HTTP '+r.status);const j=await r.json();if(!j.contents)throw Error('empty proxy response');return j.contents}
+  ];
+  let err;
+  for(const a of attempts){try{return await Promise.race([a(),new Promise((_,rej)=>setTimeout(()=>rej(Error('timeout')),15000))])}catch(e){err=e}}
+  throw err||Error('fetch failed');
+}
+async function fetchBlob(url){
+  const tries=[url,'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+  let err;
+  for(const u of tries){try{
+    const r=await Promise.race([fetch(u),new Promise((_,rej)=>setTimeout(()=>rej(Error('timeout')),12000))]);
+    if(!r.ok)throw Error('HTTP '+r.status);
+    return await r.blob();
+  }catch(e){err=e}}
+  throw err||Error('asset fetch failed');
+}
+function blobToDataURL(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(blob)})}
+
+function analyze(html,pageUrl){
+ const doc=new DOMParser().parseFromString(html,'text/html'), raw=html.toLowerCase(), txt=(doc.body?.innerText||'').replace(/\s+/g,' ');
+ const scripts=[...doc.querySelectorAll('script')], forms=[...doc.querySelectorAll('form')], links=[...doc.querySelectorAll('a[href]')], imgs=[...doc.images], ifr=[...doc.querySelectorAll('iframe')];
+ const scriptSrc=scripts.map(x=>x.getAttribute('src')).filter(Boolean), scriptText=(scriptSrc.join('\n')+'\n'+scripts.filter(x=>!x.src).map(x=>x.textContent||'').join('\n')).toLowerCase();
+ const wp=/wp-content|wp-includes|wp-json|wordpress/.test(raw)||!!doc.querySelector('meta[name=generator][content*="WordPress" i]');
+ const woo=/woocommerce|wc-ajax|add-to-cart/.test(raw), shopify=/cdn\.shopify|shopify-section|shopify-payment/.test(raw);
+ const login=!!doc.querySelector('input[type=password]')||/\b(login|log in|sign in|my account|zaloguj|konto klienta)\b/i.test(txt);
+ const commerce=woo||shopify||/\b(cart|checkout|basket|koszyk)\b/i.test(txt)||/stripe|paypal|adyen|payu|przelewy24|shopify-payment/i.test(raw);
+ const fetchN=(scriptText.match(/\bfetch\s*\(/g)||[]).length, xhrN=(scriptText.match(/xmlhttprequest/g)||[]).length, wsN=(scriptText.match(/\bwebsocket\b/g)||[]).length, apiN=(scriptText.match(/\/api\/|wp-json|graphql|admin-ajax|ajax\.php|\.php\b/g)||[]).length;
+ const dynForms=forms.filter(f=>/\.php(\?|$)|\/api\/|wp-admin|admin-ajax|graphql/i.test(f.getAttribute('action')||''));
+ const postForms=forms.filter(f=>(f.getAttribute('method')||'get').toLowerCase()==='post');
+ const searchForms=forms.filter(f=>(f.getAttribute('role')||'').toLowerCase()==='search'||/\bsearch|szukaj\b/i.test(f.innerText||'')||f.querySelector('input[type=search]'));
+ const externalScripts=scriptSrc.filter(x=>sameHost(x,pageUrl)===false).length;
+ const internalLinks=links.filter(x=>sameHost(x.getAttribute('href'),pageUrl)===true).length;
+ const maps=ifr.filter(x=>/google\.[^/]+\/maps|maps\.google/i.test(x.src||'')).length;
+ const video=ifr.filter(x=>/youtube|vimeo/i.test(x.src||'')).length;
+ const analytics=/googletagmanager|google-analytics|gtag\(|facebook\.net\/.*fbevents|clarity\.ms/i.test(raw);
+ const cookie=/cookie|consent|ciastecz|rodo/i.test(raw);
+
+ let score=100, blockers=[],convert=[],preserve=[];
+ if(login){score-=45;blockers.push(finding('bad','Auth / account','Login/password/account signal — reject standard static flow.'))}
+ if(commerce){score-=50;blockers.push(finding('bad','E-commerce / payment','Cart/checkout/payment signal — reject standard static flow.'))}
+ if(wsN){score-=35;blockers.push(finding('bad','WebSocket',`${wsN} WebSocket signal(s).`))}
+ if((fetchN+xhrN)>1 || apiN>3){score-=Math.min(28,8+(fetchN+xhrN)*4+apiN*2);blockers.push(finding('bad','Runtime/API dependency',`fetch ${fetchN}, XHR ${xhrN}, API markers ${apiN}.`))}
+ if(forms.length){
+   score-=Math.min(10,forms.length*2);
+   convert.push(finding('warn','Forms',`${forms.length} form(s), ${postForms.length} POST. Replace backend submit with shared static form endpoint.`));
+ }
+ if(searchForms.length) convert.push(finding('warn','Site search',`${searchForms.length} search form(s). Replace with client-side generated index or remove.`));
+ if(wp) convert.push(finding('good','WordPress → static','Use rendered HTML as source; remove PHP, DB, wp-admin, plugins and WP runtime.'));
+ if(dynForms.length) convert.push(finding('warn','Dynamic form action',`${dynForms.length} PHP/API form action(s) need replacement.`));
+ if(maps) preserve.push(finding('good','Google Maps',`${maps} map embed(s) can stay external.`));
+ if(video) preserve.push(finding('good','Video embeds',`${video} external video iframe(s) can stay.`));
+ if(analytics) preserve.push(finding('warn','Analytics','Third-party analytics detected. Keep only if client wants it and consent setup remains valid.'));
+ if(cookie) preserve.push(finding('warn','Cookie/consent UI','Cookie/consent code detected. Re-evaluate after removing trackers/runtime.'));
+ if(externalScripts) preserve.push(finding('warn','External JS',`${externalScripts} external script(s); smoke-test after simplification.`));
+ if(!forms.length) preserve.push(finding('good','No forms','No form backend required on this page.'));
+ if(!blockers.length) preserve.push(finding('good','No hard blocker','No obvious auth/ecommerce/runtime blocker found in page source.'));
+
+ score=Math.max(0,Math.min(100,Math.round(score)));
+ let status=score>=85&&!blockers.length?'ready':score>=65&&!blockers.some(x=>/Auth|E-commerce/.test(x.title))?'review':'reject';
+ let verdict=status==='ready'?'Suitable for automatic migration':status==='review'?'Needs one extra check':'Reject standard static flow';
+ const title=doc.title?.trim()||host(pageUrl)||'Untitled';
+ const plan=status==='ready'
+  ?'Create static snapshot → absolutize links/assets → inline CSS/images/fonts where possible → remove CMS/runtime JS → replace forms/search → visual/link QA → custom domain.'
+  :status==='review'?'Do not cut over yet. Inspect flagged API/forms/widgets, then rerun simplifier and visual QA.':'Auto-reject. Do not spend manual time unless there is a separate assisted plan.';
+ return{
+  url:pageUrl,title,score,status,verdict,blockers,convert,preserve,plan,
+  tech:{wordpress:wp,woocommerce:woo,shopify},
+  metrics:{htmlKB:Math.round(new Blob([html]).size/1024),forms:forms.length,scripts:scripts.length,externalScripts,iframes:ifr.length,images:imgs.length,links:links.length,internalLinks,fetch:fetchN,xhr:xhrN,apiMarkers:apiN}
+ };
+}
+
+function render(r){
+ last.report=r; $('#empty').style.display='none';$('#report').style.display='block';
+ $('#score').textContent=r.score;$('#verdict').textContent=r.verdict;
+ const color=r.status==='ready'?'var(--good)':r.status==='review'?'var(--warn)':'var(--bad)';
+ $('#verdict').style.color=color;$('#ring').style.background=`conic-gradient(${color} ${r.score}%,#252d35 0)`;
+ $('#meta').textContent=`${r.title} · ${host(r.url)} · one-page source scan`;
+ $('#pills').innerHTML=[
+  [r.status==='ready'?'good':r.status==='review'?'warn':'bad',r.status.toUpperCase()],
+  [r.tech.wordpress?'good':'',r.tech.wordpress?'WP SOURCE':'NO WP'],
+  [r.metrics.forms?'warn':'good',`${r.metrics.forms} FORMS`],
+  [(r.metrics.fetch+r.metrics.xhr+r.metrics.apiMarkers)?'warn':'good',`${r.metrics.fetch+r.metrics.xhr+r.metrics.apiMarkers} API SIGNALS`]
+ ].map(x=>`<span class="pill ${x[0]}">${x[1]}</span>`).join('');
+ const list=(id,a,empty)=>$(id).innerHTML=a.length?a.map(x=>`<div class="item"><i class="dot ${x.level}"></i><div><b>${esc(x.title)}</b><small>${esc(x.detail)}</small></div></div>`).join(''):`<div class="item"><i class="dot good"></i><div><b>${esc(empty)}</b></div></div>`;
+ list('#blockers',r.blockers,'No blockers');
+ list('#convert',r.convert,'Nothing required');
+ list('#preserve',r.preserve,'Nothing detected');
+ $('#metrics').innerHTML=Object.entries(r.metrics).map(([k,v])=>`<div class="kv"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+ $('#plan').innerHTML=`<div class="item"><i class="dot ${r.status==='ready'?'good':r.status==='review'?'warn':'bad'}"></i><div><b>${esc(r.plan)}</b></div></div>`;
+ $('#copySimplified').disabled=false;$('#downloadSimplified').disabled=false;
+}
+
+async function inlineCssUrls(css,base,limit={count:0,max:50}){
+ const matches=[...css.matchAll(/url\((['"]?)([^'")]+)\1\)/gi)].filter(m=>!/^data:|^#/.test(m[2].trim()));
+ let out=css;
+ for(const m of matches){
+  if(limit.count>=limit.max)break;
+  const original=m[0], target=abs(m[2].trim(),base); limit.count++;
+  try{const data=await blobToDataURL(await fetchBlob(target));out=out.split(original).join(`url("${data}")`)}catch{out=out.split(original).join(`url("${target}")`)}
+ }
+ return out;
+}
+
+async function buildSimplified(html,pageUrl){
+ const doc=new DOMParser().parseFromString(html,'text/html');
+ const progress=(p,t)=>{$('#progress').style.display='block';$('#prog').style.width=p+'%';$('#progText').textContent=t||''};
+ progress(5,'cleaning runtime');
+
+ // Remove CMS/runtime-specific metadata and scripts.
+ doc.querySelectorAll('meta[name=generator],link[rel=shortlink],link[rel="https://api.w.org/"],link[href*="wp-json"],link[rel=EditURI],script').forEach(x=>x.remove());
+ doc.querySelectorAll('[onclick],[onchange],[onsubmit],[onload],[onmouseover]').forEach(el=>[...el.attributes].forEach(a=>{if(/^on/i.test(a.name))el.removeAttribute(a.name)}));
+ doc.querySelectorAll('#wpadminbar,.wp-admin-bar,.comments-area,#comments').forEach(x=>x.remove());
+
+ // Make navigation/assets absolute.
+ for(const el of doc.querySelectorAll('[href]')){const v=el.getAttribute('href');if(v&&!/^(#|mailto:|tel:|javascript:|data:)/i.test(v))el.setAttribute('href',abs(v,pageUrl))}
+ for(const el of doc.querySelectorAll('[src]')){const v=el.getAttribute('src');if(v&&!/^data:/i.test(v))el.setAttribute('src',abs(v,pageUrl))}
+ for(const el of doc.querySelectorAll('[poster]')){const v=el.getAttribute('poster');if(v)el.setAttribute('poster',abs(v,pageUrl))}
+ for(const el of doc.querySelectorAll('[srcset]')){const v=el.getAttribute('srcset');if(v)el.setAttribute('srcset',v.split(',').map(p=>{let [u,...d]=p.trim().split(/\s+/);return abs(u,pageUrl)+' '+d.join(' ')}).join(', '))}
+
+ // Disable backend forms but preserve their visual content.
+ for(const f of doc.querySelectorAll('form')){
+   f.setAttribute('data-static-migration','form-needs-endpoint');f.removeAttribute('action');f.removeAttribute('method');
+   f.querySelectorAll('button[type=submit],input[type=submit]').forEach(b=>{b.setAttribute('type','button');b.setAttribute('disabled','disabled');b.setAttribute('title','Static snapshot: connect shared form endpoint before launch')});
+ }
+ // Remove site-search forms entirely from simplified snapshot.
+ doc.querySelectorAll('form[role=search],form:has(input[type=search])').forEach(f=>{const x=doc.createElement('div');x.setAttribute('data-static-migration','search-removed');x.textContent='';f.replaceWith(x)});
+
+ progress(18,'inlining styles');
+ const styles=[...doc.querySelectorAll('link[rel=stylesheet][href]')];
+ let n=0;
+ for(const link of styles.slice(0,35)){
+   n++; const href=link.href||link.getAttribute('href');
+   try{
+     let css=await fetchText(href);
+     css=await inlineCssUrls(css,href);
+     const st=doc.createElement('style');st.setAttribute('data-inlined-from',href);st.textContent=css;link.replaceWith(st);
+   }catch{}
+   progress(18+Math.round((n/Math.max(1,styles.length))*30),`styles ${n}/${styles.length}`);
+ }
+
+ progress(52,'inlining images');
+ const media=[...doc.querySelectorAll('img[src],source[src]')].slice(0,60);n=0;
+ for(const img of media){
+   n++; const src=img.getAttribute('src');if(src&&!src.startsWith('data:')){
+     try{img.setAttribute('src',await blobToDataURL(await fetchBlob(src)));img.removeAttribute('srcset')}catch{}
+   }
+   progress(52+Math.round((n/Math.max(1,media.length))*35),`images ${n}/${media.length}`);
+ }
+
+ const marker=doc.createComment(` Static snapshot generated ${new Date().toISOString()} from ${pageUrl}. Review forms, search and third-party integrations before publishing. `);
+ doc.documentElement.prepend(marker);
+ progress(92,'serializing');
+ const result='<!doctype html>\n'+doc.documentElement.outerHTML;
+ progress(100,`${Math.round(new Blob([result]).size/1024)} KB`);
+ return result;
+}
+
+async function doAnalyze(html,url){
+ if(!html.trim()){setStatus('No HTML to analyze','err');return}
+ last={report:null,html,url,simplified:null};render(analyze(html,url));
+ setStatus('Analysis complete. Copy simplified is ready. This is a one-page source scan; full production needs crawler + visual QA.','ok');
+}
+function setStatus(t,c=''){const e=$('#status');e.className='note '+c;e.textContent=t}
+
+$('#analyzeUrl').onclick=async()=>{
+ const url=safeUrl($('#url').value);if(!url){setStatus('Invalid URL','err');return}
+ $('#analyzeUrl').disabled=true;setStatus('Fetching page source… direct → CORS proxy fallback.');
+ try{const html=await fetchText(url);$('#source').value=html;await doAnalyze(html,url)}catch(e){setStatus('Could not fetch URL: '+e.message+'. Paste HTML manually or use production proxy/crawler.','err')}finally{$('#analyzeUrl').disabled=false}
+};
+$('#analyzeHtml').onclick=()=>doAnalyze($('#source').value,safeUrl($('#url').value)||'');
+$('#file').onchange=async e=>{const f=e.target.files?.[0];if(f){const t=await f.text();$('#source').value=t;doAnalyze(t,safeUrl($('#url').value)||'')}};
+$('#reset').onclick=()=>location.href=location.pathname;
+
+async function getSimplified(){
+ if(last.simplified)return last.simplified;
+ $('#copySimplified').disabled=true;$('#downloadSimplified').disabled=true;
+ try{last.simplified=await buildSimplified(last.html,last.url);return last.simplified}
+ finally{$('#copySimplified').disabled=false;$('#downloadSimplified').disabled=false}
+}
+$('#copySimplified').onclick=async()=>{try{const s=await getSimplified();await navigator.clipboard.writeText(s);setStatus(`Simplified HTML copied (${Math.round(new Blob([s]).size/1024)} KB).`,'ok')}catch(e){setStatus('Build/copy failed: '+e.message,'err')}};
+function download(name,text,type='text/html'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('#downloadSimplified').onclick=async()=>{try{const s=await getSimplified();download((host(last.url)||'site')+'-simplified.html',s)}catch(e){setStatus('Build failed: '+e.message,'err')}};
+$('#json').onclick=()=>last.report&&download((host(last.url)||'site')+'-report.json',JSON.stringify(last.report,null,2),'application/json');
+
+// Offline demo/testing hook. Does not run during normal usage.
+const DEMO={
+'gaccountancy.pl':`<!doctype html><html><head><title>Usługi księgowe - Warszawa | Biuro rachunkowe GAccountancy</title><meta name="generator" content="WordPress"><link rel="stylesheet" href="/wp-content/themes/demo/style.css"><script src="/wp-includes/js/jquery.js"><\/script><script src="https://www.googletagmanager.com/gtag/js"><\/script></head><body><form role="search"><input type="search"></form><h1>Biuro rachunkowe w Warszawie</h1><a href="/kontakt/">Kontakt</a><iframe src="https://www.google.com/maps/embed"></iframe><form method="post" action="/wp-admin/admin-ajax.php"><input name="name"><input type="email"><button type="submit">Wyślij</button></form><img src="/wp-content/uploads/logo.png"></body></html>`,
+'erachuba.pl':`<!doctype html><html><head><title>eRachuba.pl</title><meta name="generator" content="WordPress"></head><body><h1>Witamy w eRachuba.pl</h1><a href="/uslugi/">Usługi</a><a href="mailto:biuro@erachuba.pl">Mail</a><script src="/wp-includes/js/jquery.js"><\/script></body></html>`,
+'iagat.pl':`<!doctype html><html><head><title>AGAT Elektryk Warszawa</title><meta name="generator" content="WordPress"></head><body><nav><a href="/kontakt/">Kontakt</a><a href="/blog/">Blog</a></nav><h1>Elektryk Warszawa 24h</h1><iframe src="https://www.google.com/maps/embed"></iframe><script src="https://www.googletagmanager.com/gtag/js"><\/script></body></html>`,
+'tech-elektryk.pl':`<!doctype html><html><head><title>Tech-Elektryk</title><meta name="generator" content="WordPress"></head><body><h1>Elektryk w Warszawie</h1><form role="search"><input type="search"></form><a href="/kontakt/">Kontakt</a></body></html>`
+};
+const qp=new URLSearchParams(location.search),demo=qp.get('demo');
+if(demo&&DEMO[demo]){ $('#url').value='https://'+demo;$('#source').value=DEMO[demo];doAnalyze(DEMO[demo],'https://'+demo); }
+window.__MVP={analyze,buildSimplified,DEMO};
+</script>
+</body></html>
