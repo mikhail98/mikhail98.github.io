@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="67 Platform migrates, hosts and maintains business websites for free. Keep your domain, your content and your customer leads.">
+<meta name="theme-color" content="#11130f">
+<title>67 Platform — Your business website, handled.</title>
+<style>
+:root{
+  --ink:#11130f;
+  --paper:#f5f4ee;
+  --paper-2:#ecebe4;
+  --lime:#b8ff59;
+  --lime-dark:#5f9e14;
+  --white:#fff;
+  --muted:#62685d;
+  --line:#d8d8cf;
+  --dark-line:#2a2d26;
+  --blue:#6e95ff;
+  --shadow:0 18px 60px rgba(17,19,15,.12);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:var(--paper);
+  font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.container{width:min(1180px,calc(100% - 36px));margin:0 auto}
+.skip{position:absolute;left:-999px;top:auto}
+.skip:focus{left:16px;top:16px;z-index:1000;background:#fff;padding:10px;border-radius:8px}
+.header{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(16px);
+  background:rgba(245,244,238,.82);
+  border-bottom:1px solid rgba(17,19,15,.08);
+}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:inline-flex;align-items:center;gap:10px;font-weight:780;letter-spacing:-.02em}
+.logo-mark{
+  width:38px;height:38px;border-radius:11px;background:var(--ink);color:var(--lime);
+  display:grid;place-items:center;font-weight:900;letter-spacing:-.08em;font-size:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.logo-word{font-size:17px}
+.nav-links{display:flex;align-items:center;gap:26px;color:#43483f;font-size:13px;font-weight:600}
+.nav-links a:hover{color:var(--ink)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;padding:0 18px;border:1px solid var(--ink);border-radius:999px;
+  background:var(--ink);color:var(--white);font-weight:760;cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(17,19,15,.16)}
+.btn.lime{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.small{min-height:40px;padding:0 15px;font-size:13px}
+.hero{padding:84px 0 62px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:54px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:6px 10px;
+  border:1px solid #cfd1c7;border-radius:999px;background:rgba(255,255,255,.42);
+  color:#474c43;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase
+}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--lime-dark);box-shadow:0 0 0 4px rgba(95,158,20,.12)}
+h1{
+  max-width:720px;margin:20px 0 18px;
+  font-size:clamp(48px,6vw,78px);line-height:.98;letter-spacing:-.065em;
+}
+.hero-copy{max-width:650px;color:#565c52;font-size:18px;line-height:1.6}
+.url-form{
+  margin-top:28px;display:flex;align-items:center;gap:10px;max-width:670px;
+  padding:8px;background:var(--white);border:1px solid #d7d8ce;border-radius:999px;
+  box-shadow:0 16px 38px rgba(17,19,15,.09);
+}
+.url-form input{
+  min-width:0;flex:1;height:48px;border:0;outline:0;background:transparent;
+  padding:0 13px;color:var(--ink)
+}
+.url-form input::placeholder{color:#92978e}
+.form-message{min-height:22px;margin:9px 0 0 12px;color:var(--muted);font-size:12px}
+.form-message.success{color:#377909}.form-message.error{color:#b33327}
+.hero-notes{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:20px;color:#4e544b;font-size:12px;font-weight:650}
+.hero-notes span{display:inline-flex;align-items:center;gap:7px}
+.tick{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#e4f8cd;color:#397b08;font-size:11px;font-weight:900}
+.product-scene{position:relative;min-height:590px}
+.browser{
+  position:absolute;inset:20px 0 42px 20px;border-radius:24px;background:var(--white);
+  border:1px solid #d7d8cf;box-shadow:0 34px 80px rgba(17,19,15,.17);overflow:hidden;
+  transform:rotate(1.3deg)
+}
+.browser-top{height:50px;border-bottom:1px solid #e7e7df;display:flex;align-items:center;gap:9px;padding:0 16px;background:#fbfbf8}
+.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;background:#d5d6ce}.address{margin-left:8px;flex:1;height:28px;border-radius:999px;background:#f0f0e9;display:flex;align-items:center;padding:0 12px;color:#747a71;font-size:10px}
+.site-demo{padding:28px;background:linear-gradient(145deg,#10251e,#173b2e 58%,#1d503b);color:#fff;min-height:100%}
+.site-demo-nav{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#dceae2}
+.site-demo-brand{display:flex;align-items:center;gap:8px;font-weight:800;color:#fff}.site-demo-brand i{width:24px;height:24px;border-radius:7px;background:var(--lime);display:grid;place-items:center;color:var(--ink);font-style:normal}
+.site-demo-links{display:flex;gap:14px}
+.site-demo h2{font-size:40px;line-height:1.03;letter-spacing:-.045em;margin:58px 0 14px;max-width:430px}
+.site-demo p{max-width:420px;color:#c8ddd1;font-size:13px}
+.demo-cta{display:inline-flex;margin-top:18px;padding:11px 15px;border-radius:999px;background:var(--lime);color:var(--ink);font-weight:800;font-size:11px}
+.demo-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:44px}
+.demo-card{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);border-radius:12px;padding:12px;color:#eaf3ed;font-size:10px}
+.chat{
+  position:absolute;right:-18px;bottom:0;width:330px;border-radius:20px;background:var(--ink);color:#fff;
+  border:1px solid #2d312a;box-shadow:0 26px 66px rgba(17,19,15,.28);padding:16px;transform:rotate(-1.7deg)
+}
+.chat-head{display:flex;align-items:center;justify-content:space-between;color:#d8ddd4;font-size:11px}.online{display:inline-flex;align-items:center;gap:6px}.online i{width:7px;height:7px;border-radius:50%;background:var(--lime)}
+.msg{max-width:86%;padding:10px 12px;border-radius:14px;margin-top:12px;font-size:11px;line-height:1.45}
+.msg.user{margin-left:auto;background:#2c3029;color:#f4f6f2;border-bottom-right-radius:4px}
+.msg.ai{background:var(--lime);color:var(--ink);border-bottom-left-radius:4px}
+.change-list{margin-top:12px;border-top:1px solid #2a2e28;padding-top:11px;color:#aeb5aa;font-size:10px}
+.change{display:flex;align-items:center;justify-content:space-between;padding:4px 0}.change b{color:#e9ede6}.done{color:var(--lime)}
+.trust{padding:0 0 74px}
+.trust-row{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.35)}
+.trust-item{padding:21px 22px;border-left:1px solid var(--line)}.trust-item:first-child{border-left:0}.trust-item b{display:block;font-size:13px}.trust-item span{color:var(--muted);font-size:11px}
+.section{padding:90px 0}.section.dark{background:var(--ink);color:#fff}.section.soft{background:var(--paper-2)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:38px}
+.section-head h2{margin:0;max-width:720px;font-size:clamp(34px,4.5vw,58px);line-height:1.02;letter-spacing:-.055em}
+.section-head p{max-width:420px;margin:0;color:var(--muted);font-size:14px}.dark .section-head p{color:#aeb5aa}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.step{min-height:250px;padding:22px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.42);display:flex;flex-direction:column}
+.step-no{width:36px;height:36px;border-radius:10px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-weight:850;font-size:12px}
+.step h3{font-size:19px;letter-spacing:-.025em;margin:52px 0 8px}.step p{margin:0;color:var(--muted);font-size:12px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.feature{min-height:220px;border:1px solid var(--dark-line);border-radius:18px;background:#171a15;padding:22px}
+.feature-icon{width:42px;height:42px;border-radius:12px;background:var(--lime);color:var(--ink);display:grid;place-items:center;font-weight:900}
+.feature h3{font-size:18px;margin:38px 0 8px}.feature p{margin:0;color:#adb5a9;font-size:12px}
+.feature .status{display:inline-flex;margin-top:16px;border:1px solid #343930;border-radius:999px;padding:4px 7px;color:#cad1c6;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.feature .status.next{border-color:#48662a;color:#c9f69a}
+.ai-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:46px;align-items:center}
+.ai-copy h2{font-size:clamp(38px,5vw,64px);line-height:1;letter-spacing:-.06em;margin:0 0 18px}
+.ai-copy p{color:var(--muted);font-size:16px}
+.quote-stack{display:grid;gap:9px;margin-top:24px}.quote{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);background:rgba(255,255,255,.5);border-radius:12px;font-size:12px}.quote i{font-style:normal;width:25px;height:25px;border-radius:8px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-weight:900}
+.ai-panel{border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--shadow);padding:18px}
+.ai-window{border:1px solid #dedfd6;border-radius:16px;overflow:hidden}
+.ai-window-head{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #e7e8e0;background:#fafaf7;font-size:11px}
+.ai-conversation{padding:20px;background:#f5f5ef}
+.ai-bubble{padding:12px 14px;border-radius:14px;max-width:84%;font-size:12px;margin-bottom:10px}.ai-bubble.user{margin-left:auto;background:var(--ink);color:#fff;border-bottom-right-radius:4px}.ai-bubble.bot{background:var(--lime);border-bottom-left-radius:4px}
+.preview-card{margin-top:12px;border:1px solid #d9dbd0;border-radius:13px;background:#fff;padding:13px}.preview-card-top{display:flex;justify-content:space-between;align-items:center;font-size:11px}.preview-change{margin-top:10px;background:#f0f2e9;border-radius:9px;padding:11px;font-size:11px;color:#555d51}.preview-actions{display:flex;gap:8px;margin-top:11px}.mini-btn{padding:8px 11px;border-radius:999px;border:1px solid #d1d3c9;background:#fff;font-size:10px;font-weight:800}.mini-btn.publish{background:var(--ink);color:#fff;border-color:var(--ink)}
+.why-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
+.why-card{border:1px solid var(--line);border-radius:20px;padding:28px;background:rgba(255,255,255,.45)}
+.why-card.primary{background:var(--lime);border-color:var(--lime)}
+.why-card h3{font-size:30px;line-height:1.05;letter-spacing:-.045em;margin:0 0 16px}.why-card p{margin:0;color:#586055}.why-card.primary p{color:#29301f}
+.no-catch{display:grid;gap:0;margin-top:24px}.no-catch div{display:flex;justify-content:space-between;gap:20px;border-top:1px solid rgba(17,19,15,.18);padding:11px 0;font-size:12px}.no-catch b{font-weight:800}
+.roadmap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.road-card{border:1px solid var(--line);border-radius:18px;padding:23px;background:rgba(255,255,255,.38)}
+.road-label{display:inline-flex;padding:4px 7px;border-radius:999px;background:var(--ink);color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.road-label.next{background:#d9f9b1;color:#315b08}.road-card h3{font-size:22px;margin:20px 0 12px}.road-list{display:grid;gap:8px}.road-list span{display:flex;align-items:center;gap:8px;color:#555c52;font-size:12px}.road-list i{width:16px;height:16px;border-radius:50%;background:#e2f6ca;color:#477b14;display:grid;place-items:center;font-size:9px;font-style:normal;font-weight:900}
+.faq{max-width:880px;margin:0 auto}.faq-item{border-top:1px solid var(--line)}.faq-item:last-child{border-bottom:1px solid var(--line)}
+.faq-button{width:100%;display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px 0;border:0;background:transparent;color:var(--ink);font-weight:760;text-align:left;cursor:pointer}.faq-button span:last-child{font-size:20px;font-weight:400}
+.faq-answer{display:none;padding:0 42px 22px 0;color:var(--muted);font-size:13px;max-width:760px}.faq-item.open .faq-answer{display:block}.faq-item.open .faq-button span:last-child{transform:rotate(45deg)}
+.cta{padding:40px 0 88px}.cta-box{position:relative;overflow:hidden;border-radius:26px;background:var(--ink);color:#fff;padding:56px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
+.cta-box:before{content:"67";position:absolute;right:160px;top:-105px;color:rgba(184,255,89,.06);font-size:330px;font-weight:950;letter-spacing:-.12em;line-height:1}
+.cta-box h2{position:relative;margin:0;font-size:clamp(38px,5vw,68px);line-height:.98;letter-spacing:-.06em}.cta-box p{position:relative;color:#adb5aa;max-width:610px;margin:15px 0 0}
+.footer{border-top:1px solid var(--line);padding:30px 0 44px}.footer-grid{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}.footer-copy{color:var(--muted);font-size:11px;max-width:460px;margin-top:12px}.footer-links{display:flex;gap:20px;color:#52584f;font-size:11px}
+.notice{
+  position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);
+  opacity:0;pointer-events:none;background:var(--ink);color:#fff;padding:12px 16px;border-radius:999px;
+  box-shadow:0 14px 40px rgba(0,0,0,.25);font-size:12px;z-index:200;transition:.25s
+}
+.notice.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:980px){
+  .nav-links{display:none}.hero{padding-top:58px}.hero-grid,.ai-grid,.why-grid{grid-template-columns:1fr}.product-scene{min-height:590px;margin-top:20px}.steps{grid-template-columns:1fr 1fr}.features{grid-template-columns:1fr 1fr}.section-head{align-items:flex-start;flex-direction:column}.cta-box{grid-template-columns:1fr}.trust-row{grid-template-columns:1fr 1fr}.trust-item:nth-child(3){border-left:0;border-top:1px solid var(--line)}.trust-item:nth-child(4){border-top:1px solid var(--line)}
+}
+@media(max-width:650px){
+  .container{width:min(100% - 24px,1180px)}.nav{height:62px}.nav .btn{display:none}.hero{padding:44px 0 42px}h1{font-size:49px}.hero-copy{font-size:16px}.url-form{display:block;border-radius:18px;padding:8px}.url-form input{width:100%}.url-form .btn{width:100%}.hero-notes{display:grid;grid-template-columns:1fr 1fr;gap:10px}.product-scene{min-height:510px}.browser{inset:8px 0 64px 0}.site-demo{padding:20px}.site-demo-links{display:none}.site-demo h2{font-size:31px;margin-top:42px}.demo-cards{grid-template-columns:1fr 1fr}.demo-card:last-child{display:none}.chat{width:285px;right:-2px}.trust{padding-bottom:54px}.trust-row,.steps,.features,.roadmap{grid-template-columns:1fr}.trust-item{border-left:0;border-top:1px solid var(--line)}.trust-item:first-child{border-top:0}.section{padding:66px 0}.step{min-height:210px}.cta-box{padding:34px 24px}.footer-grid{flex-direction:column}.footer-links{flex-wrap:wrap}
+}
+</style>
+</head>
+<body data-js-ready="false">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="header">
+  <div class="container nav">
+    <a class="logo" href="#" aria-label="67 Platform home">
+      <span class="logo-mark">67</span>
+      <span class="logo-word">Platform</span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#how">How it works</a>
+      <a href="#features">What you get</a>
+      <a href="#ai">AI Webmaster</a>
+      <a href="#why-free">Why free?</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn small" href="#check">Check your website</a>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow"><i></i> Free managed website for local businesses</span>
+      <h1>Your business website, handled.</h1>
+      <p class="hero-copy">
+        We migrate your existing website, host it, keep it online, and update it whenever you ask — free.
+        Keep your domain, your content, and every customer lead.
+      </p>
+
+      <form class="url-form" id="check" novalidate>
+        <input id="websiteUrl" name="website" type="url" inputmode="url" autocomplete="url" placeholder="Your business website, e.g. acmeplumbing.com" aria-label="Business website URL" required>
+        <button class="btn lime" type="submit">Get a free preview <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="form-message" id="formMessage" aria-live="polite"></div>
+
+      <div class="hero-notes">
+        <span><i class="tick">✓</i>No credit card</span>
+        <span><i class="tick">✓</i>Keep your domain</span>
+        <span><i class="tick">✓</i>No ads</span>
+        <span><i class="tick">✓</i>Leads go to you</span>
+      </div>
+    </div>
+
+    <div class="product-scene" aria-label="Product preview">
+      <div class="browser">
+        <div class="browser-top">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span class="address">acmeheating.com</span>
+        </div>
+        <div class="site-demo">
+          <div class="site-demo-nav">
+            <span class="site-demo-brand"><i>A</i> ACME Heating</span>
+            <span class="site-demo-links"><span>Services</span><span>About</span><span>Contact</span></span>
+          </div>
+          <h2>Comfort at home, all year round.</h2>
+          <p>Local heating and air-conditioning service. Fast appointments, clear pricing, experienced technicians.</p>
+          <span class="demo-cta">Book a service</span>
+          <div class="demo-cards">
+            <div class="demo-card">HVAC repair<br><b>Same-day help</b></div>
+            <div class="demo-card">AC cleaning<br><b>Now available</b></div>
+            <div class="demo-card">Maintenance<br><b>Plans from $79</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat">
+        <div class="chat-head">
+          <b>67 Webmaster</b>
+          <span class="online"><i></i>Online</span>
+        </div>
+        <div class="msg user">Add AC cleaning as a service and change our hours to 8 AM–6 PM.</div>
+        <div class="msg ai">Done. I prepared a preview with both changes.</div>
+        <div class="change-list">
+          <div class="change"><b>New service</b><span class="done">Added</span></div>
+          <div class="change"><b>Opening hours</b><span class="done">Updated</span></div>
+          <div class="change"><b>New version</b><span class="done">Ready</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="container trust-row">
+    <div class="trust-item"><b>Your domain stays yours</b><span>We never take ownership.</span></div>
+    <div class="trust-item"><b>Your leads stay yours</b><span>Website inquiries go directly to you.</span></div>
+    <div class="trust-item"><b>No ads on your website</b><span>Your customers see your business, not ours.</span></div>
+    <div class="trust-item"><b>Leave whenever you want</b><span>Export your site or point your domain elsewhere.</span></div>
+  </div>
+</section>
+
+<section class="section soft" id="how">
+  <div class="container">
+    <div class="section-head">
+      <h2>Nothing changes until you approve it.</h2>
+      <p>We do the technical work first. You review a private preview before your current website or domain is touched.</p>
+    </div>
+    <div class="steps">
+      <article class="step"><span class="step-no">01</span><h3>We rebuild your site</h3><p>We preserve the content, services, images and structure customers already recognize.</p></article>
+      <article class="step"><span class="step-no">02</span><h3>You review the preview</h3><p>Your private version is ready before you make any commitment or DNS change.</p></article>
+      <article class="step"><span class="step-no">03</span><h3>We put it online</h3><p>Use a free 67 address or connect your existing domain. SSL and monitoring are included.</p></article>
+      <article class="step"><span class="step-no">04</span><h3>You update it by message</h3><p>No builder to learn. Tell 67 what changed, review the result, and publish.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section dark" id="features">
+  <div class="container">
+    <div class="section-head">
+      <h2>A complete business website — without the website work.</h2>
+      <p>The core service is free. New business tools will be added without turning the website into a complicated dashboard.</p>
+    </div>
+    <div class="features">
+      <article class="feature"><div class="feature-icon">↗</div><h3>Free migration</h3><p>We move the public pages and assets from your current website into a fast, secure static version.</p><span class="status">Available</span></article>
+      <article class="feature"><div class="feature-icon">0</div><h3>Free hosting</h3><p>Use your own domain or a free 67 Platform address. No hosting fee and no ads.</p><span class="status">Available</span></article>
+      <article class="feature"><div class="feature-icon">✓</div><h3>SSL, monitoring and rollback</h3><p>We keep the site online, monitor it and retain versions so changes can be reversed.</p><span class="status">Available</span></article>
+      <article class="feature"><div class="feature-icon">✦</div><h3>AI Webmaster</h3><p>Ask for content changes in plain language. Review the proposed update before it goes live.</p><span class="status next">Early access</span></article>
+      <article class="feature"><div class="feature-icon">↓</div><h3>Lead Inbox</h3><p>Customer inquiries from your website are delivered to you and organized in one place.</p><span class="status next">Coming next</span></article>
+      <article class="feature"><div class="feature-icon">□</div><h3>Booking integrations</h3><p>Add Booksy, Calendly or the booking tool you already use without rebuilding your website.</p><span class="status next">Coming next</span></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="ai">
+  <div class="container ai-grid">
+    <div class="ai-copy">
+      <span class="eyebrow"><i></i> AI Webmaster</span>
+      <h2>Your website does not need a dashboard.</h2>
+      <p>Send a normal message. 67 prepares the update, shows you what changed, and keeps the previous version ready in case you want to undo it.</p>
+      <div class="quote-stack">
+        <div class="quote"><i>67</i>“Change our phone number.”</div>
+        <div class="quote"><i>67</i>“Add emergency plumbing.”</div>
+        <div class="quote"><i>67</i>“We are closed next Monday.”</div>
+        <div class="quote"><i>67</i>“Use these three new photos.”</div>
+      </div>
+    </div>
+
+    <div class="ai-panel">
+      <div class="ai-window">
+        <div class="ai-window-head"><b>Website updates</b><span>acmeheating.com</span></div>
+        <div class="ai-conversation">
+          <div class="ai-bubble user">Add “AC cleaning” to our services. Price starts at $129.</div>
+          <div class="ai-bubble bot">I added the service to the homepage and services page. Here is the preview.</div>
+          <div class="preview-card">
+            <div class="preview-card-top"><b>Version 18</b><span>2 pages changed</span></div>
+            <div class="preview-change"><b>AC cleaning</b><br>Professional air-conditioner cleaning from $129.</div>
+            <div class="preview-actions"><button class="mini-btn" type="button">View changes</button><button class="mini-btn publish" type="button">Publish</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section soft" id="why-free">
+  <div class="container">
+    <div class="section-head">
+      <h2>Free because simple business websites are inexpensive to run.</h2>
+      <p>We automate the expensive parts: migration, hosting and routine updates. That lets us offer the core website plan at no charge within fair-use limits.</p>
+    </div>
+    <div class="why-grid">
+      <article class="why-card primary">
+        <h3>No catch hidden in your customer leads.</h3>
+        <p>We do not place ads on your website and we do not resell inquiries generated by your existing website. Optional paid business tools may be introduced later; the core website plan stays separate.</p>
+        <div class="no-catch">
+          <div><span>Hosting fee</span><b>$0</b></div>
+          <div><span>Ads on your website</span><b>None</b></div>
+          <div><span>Commission on your own leads</span><b>None</b></div>
+          <div><span>Credit card required</span><b>No</b></div>
+        </div>
+      </article>
+      <article class="why-card">
+        <h3>Use our address or keep yours.</h3>
+        <p>A free 67 Platform subdomain costs nothing at all. If you keep your own domain, you continue paying only its normal renewal fee to your registrar — not a hosting fee to us.</p>
+        <div class="no-catch">
+          <div><span>acme.67platform.com</span><b>$0 total</b></div>
+          <div><span>acmeheating.com</span><b>Hosting $0</b></div>
+          <div><span>Domain ownership</span><b>Yours</b></div>
+          <div><span>Email DNS records</span><b>Untouched</b></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>What exists now — and what we are building next.</h2>
+      <p>We show future features clearly instead of pretending everything is already finished.</p>
+    </div>
+    <div class="roadmap">
+      <article class="road-card">
+        <span class="road-label">Available now</span>
+        <h3>The free website foundation</h3>
+        <div class="road-list">
+          <span><i>✓</i>Migration from an existing public website</span>
+          <span><i>✓</i>Static hosting, SSL and monitoring</span>
+          <span><i>✓</i>Free subdomain or custom domain</span>
+          <span><i>✓</i>Private preview before launch</span>
+          <span><i>✓</i>Contact form delivered to the owner</span>
+        </div>
+      </article>
+      <article class="road-card">
+        <span class="road-label next">Building next</span>
+        <h3>Tools that remove more admin work</h3>
+        <div class="road-list">
+          <span><i>→</i>AI content updates and version history</span>
+          <span><i>→</i>Lead Inbox and notifications</span>
+          <span><i>→</i>Booksy and Calendly integrations</span>
+          <span><i>→</i>Website and inquiry analytics</span>
+          <span><i>→</i>More tools for customers and bookings</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section soft" id="faq">
+  <div class="container">
+    <div class="section-head">
+      <h2>Questions a careful business owner should ask.</h2>
+      <p>Website migrations require trust. These are the terms we want to make clear before you connect anything.</p>
+    </div>
+    <div class="faq">
+      <div class="faq-item open">
+        <button class="faq-button" type="button"><span>What is the catch?</span><span>+</span></button>
+        <div class="faq-answer">The core website plan is free within fair-use limits. We may offer optional paid business tools later, such as advanced messaging, customer management or booking. There are no ads on your website and no commission on inquiries generated by your own website.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>Do you own my domain?</span><span>+</span></button>
+        <div class="faq-answer">No. You keep ownership and control of your domain. We only ask you to point the website-related DNS records to 67 Platform.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>Will my business email keep working?</span><span>+</span></button>
+        <div class="faq-answer">Yes. We do not change MX, SPF, DKIM or DMARC records used by your email. Only website-related DNS records are changed.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>Where do contact-form inquiries go?</span><span>+</span></button>
+        <div class="faq-answer">Directly to the business owner. At launch, 67 Platform does not redirect or resell inquiries generated by your website.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>Can I leave?</span><span>+</span></button>
+        <div class="faq-answer">Yes. Your domain remains yours. You can point it elsewhere, and we intend to provide a static export of your website.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>Is every website eligible?</span><span>+</span></button>
+        <div class="faq-answer">No. Stores, customer portals, login-based products and complex web applications may not qualify. 67 Platform is designed for public business websites and service pages.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-button" type="button"><span>What happens to my current website?</span><span>+</span></button>
+        <div class="faq-answer">Nothing until you approve the private preview and connect the new version. Your old hosting can stay active during verification and rollback.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container cta-box">
+    <div>
+      <h2>See what your website looks like on 67.</h2>
+      <p>Send us your current website. We will check whether it qualifies and prepare a private preview before anything changes.</p>
+    </div>
+    <a class="btn lime" href="#check">Check your website →</a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="logo" href="#"><span class="logo-mark">67</span><span class="logo-word">Platform</span></a>
+      <div class="footer-copy">A free managed website platform for local businesses. Early-stage product; feature availability may change while we validate the service.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#why-free">Why free?</a>
+      <a href="#faq">FAQ</a>
+      <a href="mailto:hello@67platform.com">Contact</a>
+      <a href="#" data-legal="privacy">Privacy</a>
+      <a href="#" data-legal="terms">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+<script>
+const CONFIG = {
+  leadEndpoint: "", // Example: "https://api.example.com/leads"
+  contactEmail: "hello@67platform.com"
+};
+
+document.body.dataset.jsReady = "true";
+
+const form = document.querySelector("#check");
+const websiteInput = document.querySelector("#websiteUrl");
+const formMessage = document.querySelector("#formMessage");
+const notice = document.querySelector("#notice");
+
+function normalizedUrl(value){
+  try{
+    let url = value.trim();
+    if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+    return new URL(url).href;
+  }catch{
+    return null;
+  }
+}
+
+function showNotice(message){
+  notice.textContent = message;
+  notice.classList.add("show");
+  window.setTimeout(()=>notice.classList.remove("show"), 2800);
+}
+
+async function submitLead(payload){
+  if(CONFIG.leadEndpoint){
+    const response = await fetch(CONFIG.leadEndpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    if(!response.ok) throw new Error("Request failed");
+    return;
+  }
+
+  const subject = encodeURIComponent("Free website preview request");
+  const body = encodeURIComponent(
+    `Website: ${payload.website}\n\nPlease prepare a private 67 Platform preview.`
+  );
+  window.location.href = `mailto:${CONFIG.contactEmail}?subject=${subject}&body=${body}`;
+}
+
+form.addEventListener("submit", async event=>{
+  event.preventDefault();
+  const website = normalizedUrl(websiteInput.value);
+  if(!website){
+    formMessage.className = "form-message error";
+    formMessage.textContent = "Enter a valid business website.";
+    websiteInput.focus();
+    return;
+  }
+
+  const button = form.querySelector("button");
+  button.disabled = true;
+  button.textContent = "Preparing request…";
+  formMessage.className = "form-message";
+  formMessage.textContent = "We’ll use this URL only to review the public website.";
+
+  try{
+    await submitLead({website,source:"corporate-landing",createdAt:new Date().toISOString()});
+    formMessage.className = "form-message success";
+    formMessage.textContent = "Request ready. Your email app may open to complete it.";
+  }catch(error){
+    formMessage.className = "form-message error";
+    formMessage.textContent = "Could not send the request. Email us at " + CONFIG.contactEmail + ".";
+  }finally{
+    button.disabled = false;
+    button.innerHTML = 'Get a free preview <span aria-hidden="true">→</span>';
+  }
+});
+
+document.querySelectorAll(".faq-button").forEach(button=>{
+  button.addEventListener("click",()=>{
+    button.closest(".faq-item").classList.toggle("open");
+  });
+});
+
+document.querySelectorAll("[data-legal]").forEach(link=>{
+  link.addEventListener("click",event=>{
+    event.preventDefault();
+    showNotice("Replace this placeholder with the final legal page before launch.");
+  });
+});
+
+document.querySelectorAll(".mini-btn").forEach(button=>{
+  button.addEventListener("click",()=>{
+    showNotice(button.classList.contains("publish") ? "Demo: version published." : "Demo: opening change preview.");
+  });
+});
+</script>
+</body>
+</html>
