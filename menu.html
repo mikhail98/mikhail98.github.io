@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0807">
+<title>M&amp;K · Menu</title>
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0807;
+    --panel: rgba(16, 11, 9, 0.92);
+    --ink: #f1e7d0;
+    --muted: #a8997d;
+    --gold: #cfa95e;
+    --gold-line: rgba(207, 169, 94, 0.55);
+    --gold-faint: rgba(207, 169, 94, 0.2);
+    --gold-grad: linear-gradient(100deg, #8a682b 0%, #e7cd86 22%, #b38a3b 44%, #f6e6b0 62%, #a57f36 82%, #e0c27a 100%);
+    --serif: "Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
+    --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(110% 60% at 50% 0%, rgba(110, 34, 24, 0.5) 0%, rgba(10, 8, 7, 0) 62%),
+      radial-gradient(90% 50% at 50% 100%, rgba(70, 22, 16, 0.38) 0%, rgba(10, 8, 7, 0) 70%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    padding:
+      calc(20px + env(safe-area-inset-top))
+      calc(16px + env(safe-area-inset-right))
+      calc(28px + env(safe-area-inset-bottom))
+      calc(16px + env(safe-area-inset-left));
+  }
+
+  /* зернистость, как у плотной бумаги */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* золотое тиснение: градиент внутри букв медленно перетекает */
+  .gold-text { color: var(--gold); }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .gold-text {
+      background: var(--gold-grad);
+      background-size: 250% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 8s ease-in-out infinite alternate;
+    }
+  }
+  @keyframes shimmer {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+  }
+
+  .label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5em;
+    padding-left: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 180px;
+    margin: 30px auto 0;
+  }
+  .rule::before,
+  .rule::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-line));
+  }
+  .rule::after { background: linear-gradient(90deg, var(--gold-line), transparent); }
+  .rule span {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+
+  /* карточка меню */
+  .menu {
+    position: relative;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 18px 24px 50px;
+    border: 1px solid var(--gold-line);
+    background: var(--panel);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65), inset 0 0 70px rgba(0, 0, 0, 0.55);
+  }
+  .menu::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid var(--gold-faint);
+    pointer-events: none;
+  }
+
+  /* переключатель языка */
+  .lang {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+  }
+  .lang button {
+    position: relative;
+    min-width: 48px;
+    min-height: 44px;
+    padding: 0 8px 0 calc(8px + 0.3em);
+    border: 0;
+    background: none;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.3s ease;
+  }
+  .lang button::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+  }
+  .lang button[aria-pressed="true"] { color: var(--gold); }
+  .lang button[aria-pressed="true"]::after { width: 16px; }
+  .lang .dot {
+    width: 3px;
+    height: 3px;
+    background: var(--gold-line);
+    transform: rotate(45deg);
+  }
+
+  /* при смене языка текст коротко гаснет и проявляется снова */
+  .content { transition: opacity 0.22s ease; }
+  .content.fading { opacity: 0; }
+
+  /* шапка */
+  .head { margin-top: 30px; text-align: center; }
+  .brand {
+    margin-top: 18px;
+    font-weight: 400;
+    font-size: clamp(68px, 21vw, 92px);
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .brand em {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.78em;
+    margin: 0 0.06em;
+  }
+
+  /* разделы */
+  .sec { margin-top: 64px; text-align: center; }
+  .numeral {
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: 0.2em;
+    padding-left: 0.2em;
+    color: var(--gold);
+  }
+  .sec h2 {
+    margin-top: 10px;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.1;
+  }
+  .sec h2::after {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 1px;
+    margin: 16px auto 0;
+    background: var(--gold-line);
+  }
+
+  .group-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 34px;
+  }
+  .group-label::before,
+  .group-label::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--gold-faint);
+  }
+  .group-label + .items { margin-top: 20px; }
+
+  .items { margin-top: 32px; }
+  .item + .item { margin-top: 24px; }
+  /* после позиции с вариантами на выбор нужен отступ больше, иначе следующая позиция прилипает к вариантам */
+  .item:has(.choices) + .item { margin-top: 48px; }
+  .item-name {
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+    padding-left: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .item-sub {
+    margin-top: 3px;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--muted);
+  }
+
+  /* варианты на выбор через тонкие вертикальные линии */
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .choices.three { grid-template-columns: repeat(3, 1fr); }
+  .choice { padding: 6px 8px; }
+  .choice + .choice { border-left: 1px solid var(--gold-line); }
+  .choice-name {
+    display: block;
+    font-style: italic;
+    font-size: 27px;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  .three .choice-name { font-size: 23px; }
+  .group-label + .choices { margin-top: 18px; }
+
+  .on-request { margin-top: 40px; }
+  .on-request-text {
+    margin-top: 8px;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--muted);
+  }
+
+  /* подвал */
+  .foot { margin-top: 64px; text-align: center; }
+  .foot .rule { margin-top: 0; }
+  .monogram {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    margin: 30px auto 22px;
+    border: 1px solid var(--gold-line);
+    border-radius: 50%;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1;
+  }
+  .monogram::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--gold-faint);
+    border-radius: 50%;
+  }
+  .monogram em { font-size: 0.7em; margin: 0 1px; }
+
+  /* появление разделов при прокрутке */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 359px) {
+    .menu { padding-left: 16px; padding-right: 16px; }
+    .item-name { letter-spacing: 0.08em; padding-left: 0.08em; }
+    .choice-name { font-size: 23px; }
+    .three .choice-name { font-size: 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gold-text { animation: none !important; }
+    .content { transition: none; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="menu">
+
+    <nav class="lang" aria-label="Język / Language / Язык">
+      <button type="button" data-lang="pl" aria-pressed="true">PL</button>
+      <span class="dot" aria-hidden="true"></span>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <span class="dot" aria-hidden="true"></span>
+      <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+    </nav>
+
+    <div class="content">
+
+      <header class="head reveal">
+        <p class="label" data-i18n="steakhouse">Steakhouse</p>
+        <h1 class="brand gold-text">M<em>&amp;</em>K</h1>
+        <div class="rule" aria-hidden="true"><span></span></div>
+      </header>
+
+      <section class="sec reveal">
+        <p class="numeral">I</p>
+        <h2 class="gold-text" data-i18n="secMains">Dania główne</h2>
+
+        <div class="items">
+          <div class="item">
+            <h3 class="item-name" data-i18n="steak">Stek wołowy</h3>
+            <p class="item-sub" data-i18n="yourChoice">do wyboru</p>
+            <div class="choices">
+              <div class="choice">
+                <span class="choice-name" data-i18n="ribeye">Rib eye</span>
+              </div>
+              <div class="choice">
+                <span class="choice-name" data-i18n="tenderloin">Polędwica</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <h3 class="item-name" data-i18n="tartare">Tatar wołowy</h3>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec reveal">
+        <p class="numeral">II</p>
+        <h2 class="gold-text" data-i18n="secDrinks">Napoje</h2>
+
+        <p class="group-label label" data-i18n="groupCoffee">Kawa</p>
+        <div class="items">
+          <div class="item"><h3 class="item-name" data-i18n="espresso">Espresso</h3></div>
+          <div class="item"><h3 class="item-name" data-i18n="americano">Americano</h3></div>
+          <div class="item"><h3 class="item-name" data-i18n="cappuccino">Cappuccino</h3></div>
+          <div class="item"><h3 class="item-name" data-i18n="coffeeMilk">Kawa z mlekiem</h3></div>
+          <div class="item">
+            <h3 class="item-name" data-i18n="bumble">Bumble</h3>
+            <p class="item-sub" data-i18n="bumbleSub">espresso, sok pomarańczowy</p>
+          </div>
+          <div class="item">
+            <h3 class="item-name" data-i18n="tonic">Espresso tonic</h3>
+            <p class="item-sub" data-i18n="tonicSub">espresso, tonik</p>
+          </div>
+        </div>
+
+        <div class="on-request">
+          <p class="label" data-i18n="onRequest">Na życzenie</p>
+          <p class="on-request-text" data-i18n="onRequestText">kawa bezkofeinowa · mleko roślinne</p>
+        </div>
+
+        <p class="group-label label" data-i18n="groupTea">Herbata</p>
+        <div class="items">
+          <div class="item"><h3 class="item-name" data-i18n="mintTea">Herbata miętowa</h3></div>
+          <div class="item"><h3 class="item-name">Herbata Zimowa</h3></div>
+          <div class="item">
+            <h3 class="item-name">English Breakfast</h3>
+            <p class="item-sub" data-i18n="decafTea">bezkofeinowa</p>
+          </div>
+        </div>
+
+        <p class="group-label label" data-i18n="groupBeer">Piwo</p>
+        <div class="choices">
+          <div class="choice"><span class="choice-name">Corona</span></div>
+          <div class="choice"><span class="choice-name">Corona 0%</span></div>
+        </div>
+      </section>
+
+      <section class="sec reveal">
+        <p class="numeral">III</p>
+        <h2 class="gold-text" data-i18n="secDesserts">Desery</h2>
+
+        <div class="items">
+          <div class="item"><h3 class="item-name" data-i18n="tiramisu">Tiramisu</h3></div>
+          <div class="item">
+            <h3 class="item-name" data-i18n="kinder">Kinder</h3>
+            <p class="item-sub" data-i18n="yourChoice">do wyboru</p>
+            <div class="choices three">
+              <div class="choice"><span class="choice-name">Bueno</span></div>
+              <div class="choice"><span class="choice-name">Country</span></div>
+              <div class="choice"><span class="choice-name">Delice</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot reveal">
+        <div class="rule" aria-hidden="true"><span></span></div>
+        <div class="monogram" aria-hidden="true">
+          <span class="gold-text">M<em>&amp;</em>K</span>
+        </div>
+        <p class="label" data-i18n="bonAppetit">Smacznego</p>
+      </footer>
+
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      // Тексты для каждого языка. Ключ совпадает с атрибутом data-i18n в разметке.
+      // Пустая строка прячет элемент (например, подпись «полендвица» есть только в русской версии).
+      var texts = {
+        pl: {
+          steakhouse: 'Steakhouse',
+          secMains: 'Dania główne',
+          steak: 'Stek wołowy',
+          yourChoice: 'do wyboru',
+          ribeye: 'Rib eye',
+          tenderloin: 'Polędwica',
+          tartare: 'Tatar wołowy',
+          secDrinks: 'Napoje',
+          groupCoffee: 'Kawa',
+          espresso: 'Espresso',
+          americano: 'Americano',
+          cappuccino: 'Cappuccino',
+          coffeeMilk: 'Kawa z mlekiem',
+          bumble: 'Bumble',
+          bumbleSub: 'espresso, sok pomarańczowy',
+          tonic: 'Espresso tonic',
+          tonicSub: 'espresso, tonik',
+          groupTea: 'Herbata',
+          mintTea: 'Herbata miętowa',
+          decafTea: 'bezkofeinowa',
+          groupBeer: 'Piwo',
+          onRequest: 'Na życzenie',
+          onRequestText: 'kawa bezkofeinowa · mleko roślinne',
+          secDesserts: 'Desery',
+          tiramisu: 'Tiramisu',
+          kinder: 'Kinder',
+          bonAppetit: 'Smacznego'
+        },
+        en: {
+          steakhouse: 'Steakhouse',
+          secMains: 'Main courses',
+          steak: 'Beef steak',
+          yourChoice: 'your choice',
+          ribeye: 'Ribeye',
+          tenderloin: 'Tenderloin',
+          tartare: 'Beef tartare',
+          secDrinks: 'Drinks',
+          groupCoffee: 'Coffee',
+          espresso: 'Espresso',
+          americano: 'Americano',
+          cappuccino: 'Cappuccino',
+          coffeeMilk: 'Coffee with milk',
+          bumble: 'Bumble',
+          bumbleSub: 'espresso, orange juice',
+          tonic: 'Espresso tonic',
+          tonicSub: 'espresso, tonic',
+          groupTea: 'Tea',
+          mintTea: 'Mint tea',
+          decafTea: 'decaf',
+          groupBeer: 'Beer',
+          onRequest: 'On request',
+          onRequestText: 'decaf coffee · alternative milk',
+          secDesserts: 'Desserts',
+          tiramisu: 'Tiramisu',
+          kinder: 'Kinder',
+          bonAppetit: 'Bon appétit'
+        },
+        ru: {
+          steakhouse: 'Стейкхаус',
+          secMains: 'Главные блюда',
+          steak: 'Стейк из говядины',
+          yourChoice: 'на выбор',
+          ribeye: 'Рибай',
+          tenderloin: 'Вырезка',
+          tartare: 'Тартар из говядины',
+          secDrinks: 'Напитки',
+          groupCoffee: 'Кофе',
+          espresso: 'Эспрессо',
+          americano: 'Американо',
+          cappuccino: 'Капучино',
+          coffeeMilk: 'Кофе с молоком',
+          bumble: 'Бамбл',
+          bumbleSub: 'эспрессо, апельсиновый сок',
+          tonic: 'Эспрессо-тоник',
+          tonicSub: 'эспрессо, тоник',
+          groupTea: 'Чай',
+          mintTea: 'Мятный чай',
+          decafTea: 'без кофеина',
+          groupBeer: 'Пиво',
+          onRequest: 'По запросу',
+          onRequestText: 'декаф · альтернативное молоко',
+          secDesserts: 'Десерты',
+          tiramisu: 'Тирамису',
+          kinder: 'Киндеры',
+          bonAppetit: 'Приятного аппетита'
+        }
+      };
+      var defaultLang = 'pl';
+      var storageKey = 'menu-lang';
+
+      var content = document.querySelector('.content');
+      var buttons = document.querySelectorAll('.lang button');
+      var translatable = document.querySelectorAll('[data-i18n]');
+
+      function applyLang(lang) {
+        var dict = texts[lang];
+        document.documentElement.lang = lang;
+        translatable.forEach(function (el) {
+          var value = dict[el.getAttribute('data-i18n')];
+          el.textContent = value || '';
+          el.hidden = !value;
+        });
+        buttons.forEach(function (button) {
+          button.setAttribute('aria-pressed', button.dataset.lang === lang ? 'true' : 'false');
+        });
+      }
+
+      function readSavedLang() {
+        try { return localStorage.getItem(storageKey); } catch (e) { return null; }
+      }
+      function saveLang(lang) {
+        try { localStorage.setItem(storageKey, lang); } catch (e) {}
+      }
+
+      var savedLang = readSavedLang();
+      var currentLang = texts[savedLang] ? savedLang : defaultLang;
+      applyLang(currentLang);
+
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          var lang = button.dataset.lang;
+          if (lang === currentLang) return;
+          currentLang = lang;
+          saveLang(lang);
+          content.classList.add('fading');
+          setTimeout(function () {
+            applyLang(lang);
+            content.classList.remove('fading');
+          }, 220);
+        });
+      });
+
+      // появление разделов при прокрутке
+      var sections = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        sections.forEach(function (el) { el.classList.add('in'); });
+        return;
+      }
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      sections.forEach(function (el) { observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
